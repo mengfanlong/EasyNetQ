@@ -45,6 +45,9 @@ namespace EasyNetQ.Tests.AMQP
         [Test]
         public void Should_connect_successfully()
         {
+            var connectedEventFired = false;
+            persistentConnection.Connected += () => connectedEventFired = true;
+
             connectionFactory.Stub(x => x.CreateConnection()).Return(connection);
             connectionFactory.Stub(x => x.Next()).Return(false);
             connectionFactory.Stub(x => x.Succeeded).Return(true);
@@ -52,6 +55,7 @@ namespace EasyNetQ.Tests.AMQP
             persistentConnection.TryToConnect();
 
             connectionFactory.AssertWasCalled(x => x.Success());
+            connectedEventFired.ShouldBeTrue();
 
             const string expectedLogMessage =
 @"DEBUG: Trying to connect
