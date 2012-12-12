@@ -30,7 +30,8 @@ namespace EasyNetQ.ConnectionString
             BuildKeyValueParser("requestedHeartbeat", Number, c => c.RequestedHeartbeat),
             BuildKeyValueParser("username", Text, c => c.UserName),
             BuildKeyValueParser("password", Text, c => c.Password),
-            BuildKeyValueParser("prefetchcount", Number, c => c.PrefetchCount)
+            BuildKeyValueParser("prefetchcount", Number, c => c.PrefetchCount),
+            BuildKeyValueParser("connectionRetrySeconds", Number, c => c.ConnectionRetrySeconds)
         }.Aggregate((a, b) => a.Or(b));
 
         public static Parser<IEnumerable<UpdateConfiguration>> ConnectionStringBuilder = Part.ListDelimitedBy(';');

@@ -73,6 +73,8 @@
     <Compile Include="..\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="AMQP\ConnectionRetryTimerTests.cs" />
+    <Compile Include="AMQP\PersistentConnectionTests.cs" />
     <Compile Include="AutoSubscriberTests.cs" />
     <Compile Include="BinarySerializerTests.cs" />
     <Compile Include="Bugs\CannonCreateQueueExchangeUsingAdvancedAPI.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="MockConnectionFactory.cs" />
     <Compile Include="MockConsumerFactory.cs" />
     <Compile Include="Mocking\MockBuilder.cs" />
+    <Compile Include="Mocking\RecordingLogger.cs" />
     <Compile Include="MockLogger.cs" />
     <Compile Include="MockModel.cs" />
     <Compile Include="ModelCleanupTests.cs" />

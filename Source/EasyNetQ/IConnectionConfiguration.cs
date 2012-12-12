@@ -14,6 +14,7 @@ namespace EasyNetQ
         string Password { get; }
         ushort RequestedHeartbeat { get; }
         ushort PrefetchCount { get; }
+        ushort ConnectionRetrySeconds { get; }
         IDictionary<string, string> ClientProperties { get; } 
         
         IEnumerable<IHostConfiguration> Hosts { get; }
@@ -33,6 +34,7 @@ namespace EasyNetQ
         public string Password { get; set; }
         public ushort RequestedHeartbeat { get; set; }
         public ushort PrefetchCount { get; set; }
+        public ushort ConnectionRetrySeconds { get; set; }
         public IDictionary<string, string> ClientProperties { get; private set; } 
 
         public IEnumerable<IHostConfiguration> Hosts { get; set; }
@@ -46,6 +48,7 @@ namespace EasyNetQ
             UserName = "guest";
             Password = "guest";
             RequestedHeartbeat = 0;
+            ConnectionRetrySeconds = 5;
 
             // prefetchCount determines how many messages will be allowed in the local in-memory queue
             // setting to zero makes this infinite, but risks an out-of-memory exception.

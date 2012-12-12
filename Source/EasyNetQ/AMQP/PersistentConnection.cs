@@ -3,33 +3,26 @@ using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
-namespace EasyNetQ
+namespace EasyNetQ.AMQP
 {
-    public interface IPersistentConnection : IDisposable
-    {
-        event Action Connected;
-        event Action Disconnected;
-        bool IsConnected { get; }
-        IModel CreateModel();
-    }
-
     /// <summary>
     /// A connection that attempts to reconnect if the inner connection is closed.
     /// </summary>
     public class PersistentConnection : IPersistentConnection
     {
-        private const int connectAttemptIntervalMilliseconds = 5000;
-
         private readonly IConnectionFactory connectionFactory;
         private readonly IEasyNetQLogger logger;
         private IConnection connection;
+        private readonly IConnectionRetryTimer connectionRetryTimer;
 
-        public PersistentConnection(IConnectionFactory connectionFactory, IEasyNetQLogger logger)
+        public PersistentConnection(
+            IConnectionFactory connectionFactory, 
+            IEasyNetQLogger logger, 
+            IConnectionRetryTimer connectionRetryTimer)
         {
             this.connectionFactory = connectionFactory;
             this.logger = logger;
-
-            TryToConnect(null);
+            this.connectionRetryTimer = connectionRetryTimer;
         }
 
         public event Action Connected;
@@ -51,14 +44,11 @@ namespace EasyNetQ
 
         void StartTryToConnect()
         {
-            var timer = new Timer(TryToConnect);
-            timer.Change(connectAttemptIntervalMilliseconds, Timeout.Infinite);
+            connectionRetryTimer.ReTry(TryToConnect);
         }
 
-        void TryToConnect(object timer)
+        public void TryToConnect()
         {
-            if(timer != null) ((Timer) timer).Dispose();
-
             logger.DebugWrite("Trying to connect");
             if (disposed) return;
 
@@ -92,8 +82,8 @@ namespace EasyNetQ
             }
             else
             {
-                logger.ErrorWrite("Failed to connected to any Broker. Retrying in {0} ms\n", 
-                    connectAttemptIntervalMilliseconds);
+                logger.ErrorWrite("Failed to connected to any Broker. Retrying in {0} seconds", 
+                    connectionRetryTimer.RetryIntervalSeconds);
                 StartTryToConnect();
             }
         }
@@ -114,9 +104,10 @@ namespace EasyNetQ
             OnDisconnected();
 
             // try to reconnect and re-subscribe
-            logger.InfoWrite("Disconnected from RabbitMQ Broker");
+            logger.InfoWrite("Disconnected from RabbitMQ Broker. Connection reset by {0}. Reason: '{1}'",
+                reason.Initiator, reason.ReplyText);
 
-            TryToConnect(null);
+            TryToConnect();
         }
 
         public void OnConnected()

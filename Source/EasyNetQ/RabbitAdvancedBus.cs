@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using EasyNetQ.AMQP;
 using EasyNetQ.FluentConfiguration;
 using EasyNetQ.Topology;
 using RabbitMQ.Client.Exceptions;
@@ -73,7 +74,9 @@ namespace EasyNetQ
             this.getCorrelationId = getCorrelationId;
             this.conventions = conventions;
 
-            connection = new PersistentConnection(connectionFactory, logger);
+            connection = new PersistentConnection(connectionFactory, logger, new ConnectionRetryTimer(connectionConfiguration));
+            connection.TryToConnect();
+
             connection.Connected += OnConnected;
             connection.Disconnected += consumerFactory.ClearConsumers;
             connection.Disconnected += OnDisconnected;
