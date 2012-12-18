@@ -47,13 +47,27 @@
     <Compile Include="..\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="AMQP\Arguments.cs" />
+    <Compile Include="AMQP\Channel.cs" />
+    <Compile Include="AMQP\ChannelFactory.cs" />
+    <Compile Include="AMQP\ChannelSettings.cs" />
     <Compile Include="AMQP\ConnectionRetryTimer.cs" />
+    <Compile Include="AMQP\EasyNetQAmqpException.cs" />
+    <Compile Include="AMQP\Headers.cs" />
+    <Compile Include="AMQP\IChannel.cs" />
+    <Compile Include="AMQP\IChannelFactory.cs" />
     <Compile Include="AMQP\IConnectionRetryTimer.cs" />
+    <Compile Include="AMQP\IExchange.cs" />
     <Compile Include="AMQP\IPersistentConnection.cs" />
+    <Compile Include="AMQP\IQueue.cs" />
+    <Compile Include="AMQP\Message.cs" />
+    <Compile Include="AMQP\MessageProperties.cs" />
+    <Compile Include="AMQP\QueueDeclareResult.cs" />
+    <Compile Include="AMQP\QueueDeletionCriteria.cs" />
+    <Compile Include="AMQP\QueuePurgeResult.cs" />
     <Compile Include="AutoSubscriber.cs" />
     <Compile Include="BusExtensions.cs" />
     <Compile Include="ComponentRegistration.cs" />
-    <Compile Include="ConcurrentHashSet.cs" />
     <Compile Include="ConnectionString\ConnectionStringGrammar.cs" />
     <Compile Include="ConnectionString\IConnectionStringParser.cs" />
     <Compile Include="ConsumerAttribute.cs" />

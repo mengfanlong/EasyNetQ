@@ -10,5 +10,7 @@ namespace EasyNetQ.AMQP
         bool IsConnected { get; }
         IModel CreateModel();
         void TryToConnect();
+        IChannel OpenChannel();
+        IChannel OpenChannel(ChannelSettings settings);
     }
 }

@@ -5,6 +5,7 @@ using EasyNetQ.AMQP;
 using EasyNetQ.FluentConfiguration;
 using EasyNetQ.Topology;
 using RabbitMQ.Client.Exceptions;
+using IQueue = EasyNetQ.Topology.IQueue;
 
 namespace EasyNetQ
 {
@@ -74,7 +75,13 @@ namespace EasyNetQ
             this.getCorrelationId = getCorrelationId;
             this.conventions = conventions;
 
-            connection = new PersistentConnection(connectionFactory, logger, new ConnectionRetryTimer(connectionConfiguration));
+            // TODO: get dependencies from constructure args
+            connection = new PersistentConnection(
+                connectionFactory, 
+                logger, 
+                new ConnectionRetryTimer(connectionConfiguration), 
+                new ChannelFactory());
+
             connection.TryToConnect();
 
             connection.Connected += OnConnected;

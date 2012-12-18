@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
@@ -14,15 +13,18 @@ namespace EasyNetQ.AMQP
         private readonly IEasyNetQLogger logger;
         private IConnection connection;
         private readonly IConnectionRetryTimer connectionRetryTimer;
+        private readonly IChannelFactory channelFactory;
 
         public PersistentConnection(
             IConnectionFactory connectionFactory, 
             IEasyNetQLogger logger, 
-            IConnectionRetryTimer connectionRetryTimer)
+            IConnectionRetryTimer connectionRetryTimer, 
+            IChannelFactory channelFactory)
         {
             this.connectionFactory = connectionFactory;
             this.logger = logger;
             this.connectionRetryTimer = connectionRetryTimer;
+            this.channelFactory = channelFactory;
         }
 
         public event Action Connected;
@@ -35,6 +37,16 @@ namespace EasyNetQ.AMQP
                 throw new EasyNetQException("Rabbit server is not connected.");
             }
             return connection.CreateModel();
+        }
+
+        public IChannel OpenChannel()
+        {
+            return OpenChannel(new ChannelSettings());
+        }
+
+        public IChannel OpenChannel(ChannelSettings settings)
+        {
+            return channelFactory.OpenChannel(connection, settings);
         }
 
         public bool IsConnected
@@ -50,7 +62,11 @@ namespace EasyNetQ.AMQP
         public void TryToConnect()
         {
             logger.DebugWrite("Trying to connect");
-            if (disposed) return;
+            if (disposed)
+            {
+                logger.ErrorWrite("Cannot connect a disposed connection");
+                return;
+            }
 
             connectionFactory.Reset();
             do

@@ -73,8 +73,13 @@
     <Compile Include="..\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="AMQP\ChannelFactoryTests.cs" />
+    <Compile Include="AMQP\ChannelTests.cs" />
     <Compile Include="AMQP\ConnectionRetryTimerTests.cs" />
+    <Compile Include="AMQP\ExchangeTests.cs" />
+    <Compile Include="AMQP\MessagePropertiesTests.cs" />
     <Compile Include="AMQP\PersistentConnectionTests.cs" />
+    <Compile Include="AMQP\QueueTests.cs" />
     <Compile Include="AutoSubscriberTests.cs" />
     <Compile Include="Bugs\CannonCreateQueueExchangeUsingAdvancedAPI.cs" />
     <Compile Include="Bugs\SubscriptionOnTransientQueueThrowsOnReconnect.cs" />

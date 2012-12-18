@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyNetQ.Tests.Messages", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyNetQ.InMemoryClient", "EasyNetQ.InMemoryClient\EasyNetQ.InMemoryClient.csproj", "{E5115EA9-CD2E-439B-878A-DEF7F3E8FD99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mike.AmqpSpike", "Mike.AmqpSpike\Mike.AmqpSpike.csproj", "{54108F8D-F949-4280-B59D-82EB4A317C32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{E5115EA9-CD2E-439B-878A-DEF7F3E8FD99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5115EA9-CD2E-439B-878A-DEF7F3E8FD99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5115EA9-CD2E-439B-878A-DEF7F3E8FD99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54108F8D-F949-4280-B59D-82EB4A317C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54108F8D-F949-4280-B59D-82EB4A317C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54108F8D-F949-4280-B59D-82EB4A317C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54108F8D-F949-4280-B59D-82EB4A317C32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
