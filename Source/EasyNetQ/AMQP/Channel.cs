@@ -253,5 +253,82 @@ namespace EasyNetQ.AMQP
 
             model.QueueUnbind(queue.Name, exchange.Name, routingKey, arguments.ToLegacyDictionary());
         }
+
+        public void Publish(IRawMessage message, PublishSettings settings)
+        {
+            if(message == null)
+            {
+                throw new ArgumentNullException("message");
+            }
+            if(settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
+
+            var basicProperties = model.CreateBasicProperties();
+            PropertyConverter.ConvertToBasicProperties(message.Properties, basicProperties);
+
+            model.BasicPublish(
+                settings.Exchange.Name, 
+                settings.RoutingKey, 
+                settings.Mandatory, 
+                settings.Immediate,
+                basicProperties,
+                message.Body
+                );
+        }
+
+        public void StartConsuming(IConsumer consumer)
+        {
+            if(consumer == null)
+            {
+                throw new ArgumentNullException("consumer");
+            }   
+
+            var settings = consumer.Settings;
+            var basicConsumer = new BasicConsumer();
+
+            model.BasicConsume(
+                settings.Queue.Name,
+                settings.NoAck,
+                settings.ConsumerTag,
+                false,
+                settings.Exclusive,
+                settings.Arguments.ToLegacyDictionary(),
+                basicConsumer);
+        }
+    }
+
+    public class BasicConsumer : IBasicConsumer
+    {
+        public void HandleBasicConsumeOk(string consumerTag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HandleBasicCancelOk(string consumerTag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HandleBasicCancel(string consumerTag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HandleModelShutdown(IModel model, ShutdownEventArgs reason)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, byte[] body)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IModel Model
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

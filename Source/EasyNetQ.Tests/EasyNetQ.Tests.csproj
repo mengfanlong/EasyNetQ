@@ -76,9 +76,13 @@
     <Compile Include="AMQP\ChannelFactoryTests.cs" />
     <Compile Include="AMQP\ChannelTests.cs" />
     <Compile Include="AMQP\ConnectionRetryTimerTests.cs" />
+    <Compile Include="AMQP\ConsumeTests.cs" />
     <Compile Include="AMQP\ExchangeTests.cs" />
+    <Compile Include="AMQP\HeadersConverterTests.cs" />
     <Compile Include="AMQP\MessagePropertiesTests.cs" />
     <Compile Include="AMQP\PersistentConnectionTests.cs" />
+    <Compile Include="AMQP\PropertyConverterTests.cs" />
+    <Compile Include="AMQP\PublishTests.cs" />
     <Compile Include="AMQP\QueueTests.cs" />
     <Compile Include="AutoSubscriberTests.cs" />
     <Compile Include="Bugs\CannonCreateQueueExchangeUsingAdvancedAPI.cs" />

@@ -59,11 +59,18 @@ namespace EasyNetQ.AMQP
 
     public enum DeliveryMode
     {
-        Persistent,
-        NonPersistent
+        NonPersistent = 1,
+        Persistent = 2
     }
 
-    public class PropertyValue<T>
+    public interface IPropertyValue
+    {
+        bool IsSet { get; }
+        void Clear();
+        object GetValue();
+    }
+
+    public class PropertyValue<T> : IPropertyValue
     {
         public bool IsSet { get; private set; }
         private T value;
@@ -71,6 +78,11 @@ namespace EasyNetQ.AMQP
         public void Clear()
         {
             IsSet = false;
+        }
+
+        public object GetValue()
+        {
+            return Value;
         }
 
         public T Value

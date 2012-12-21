@@ -15,16 +15,16 @@
         T Value { get; }
     }
 
-    public class RawMessage : IMessage
+    public class RawMessage : IRawMessage
     {
-        public RawMessage(byte[] raw)
+        public RawMessage(byte[] body)
         {
-            Raw = raw;
+            Body = body;
             Properties = new MessageProperties();
         }
 
         public IMessageProperties Properties { get; private set; }
-        public byte[] Raw { get; private set; }
+        public byte[] Body { get; private set; }
     }
 
     public class TypedMessage<T> : ITypedMessage<T>
