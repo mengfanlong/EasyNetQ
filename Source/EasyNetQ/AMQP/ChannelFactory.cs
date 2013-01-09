@@ -1,3 +1,4 @@
+using System;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
@@ -7,6 +8,15 @@ namespace EasyNetQ.AMQP
     {
         public IChannel OpenChannel(IConnection connection, ChannelSettings settings)
         {
+            if(connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+            if(settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
+
             try
             {
                 var model = connection.CreateModel();

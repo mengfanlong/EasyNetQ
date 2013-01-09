@@ -278,15 +278,18 @@ namespace EasyNetQ.AMQP
                 );
         }
 
-        public void StartConsuming(IConsumer consumer)
+        public void StartConsuming(IConsumer consumer, ConsumerSettings settings)
         {
             if(consumer == null)
             {
                 throw new ArgumentNullException("consumer");
             }   
+            if(settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
 
-            var settings = consumer.Settings;
-            var basicConsumer = new BasicConsumer();
+            var basicConsumer = new EasyNetQBasicConsumer(consumer, this);
 
             model.BasicConsume(
                 settings.Queue.Name,
@@ -297,38 +300,15 @@ namespace EasyNetQ.AMQP
                 settings.Arguments.ToLegacyDictionary(),
                 basicConsumer);
         }
-    }
 
-    public class BasicConsumer : IBasicConsumer
-    {
-        public void HandleBasicConsumeOk(string consumerTag)
+        public void Acknowledge(ulong deliveryTag, bool multiple)
         {
-            throw new NotImplementedException();
+            model.BasicAck(deliveryTag, multiple);
         }
 
-        public void HandleBasicCancelOk(string consumerTag)
+        public void Reject(ulong deliveryTag, bool requeue)
         {
-            throw new NotImplementedException();
-        }
-
-        public void HandleBasicCancel(string consumerTag)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void HandleModelShutdown(IModel model, ShutdownEventArgs reason)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, byte[] body)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IModel Model
-        {
-            get { throw new NotImplementedException(); }
+            model.BasicNack(deliveryTag, false, requeue);
         }
     }
 }

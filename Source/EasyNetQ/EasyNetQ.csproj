@@ -48,22 +48,29 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="AMQP\Arguments.cs" />
+    <Compile Include="AMQP\BasicHandlerSelector.cs" />
     <Compile Include="AMQP\Channel.cs" />
     <Compile Include="AMQP\ChannelFactory.cs" />
     <Compile Include="AMQP\ChannelSettings.cs" />
     <Compile Include="AMQP\ConnectionRetryTimer.cs" />
     <Compile Include="AMQP\Consumer.cs" />
     <Compile Include="AMQP\ConsumerSettings.cs" />
+    <Compile Include="AMQP\DefaultExecutionPolicyBuilder.cs" />
     <Compile Include="AMQP\EasyNetQAmqpException.cs" />
+    <Compile Include="AMQP\EasyNetQBasicConsumer.cs" />
     <Compile Include="AMQP\Headers.cs" />
     <Compile Include="AMQP\IChannel.cs" />
     <Compile Include="AMQP\IChannelFactory.cs" />
     <Compile Include="AMQP\IConnectionRetryTimer.cs" />
     <Compile Include="AMQP\IConsumerLoop.cs" />
     <Compile Include="AMQP\IExchange.cs" />
+    <Compile Include="AMQP\IExecutionPolicyBuilder.cs" />
+    <Compile Include="AMQP\IHandler.cs" />
+    <Compile Include="AMQP\IHandlerSelector.cs" />
     <Compile Include="AMQP\IPersistentConnection.cs" />
     <Compile Include="AMQP\IQueue.cs" />
     <Compile Include="AMQP\Message.cs" />
+    <Compile Include="AMQP\MessageDeliveryContext.cs" />
     <Compile Include="AMQP\MessageProperties.cs" />
     <Compile Include="AMQP\PropertyConverter.cs" />
     <Compile Include="AMQP\PublishSettings.cs" />

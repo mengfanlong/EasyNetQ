@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using System;
+using System.Collections;
 using EasyNetQ.AMQP;
 using NUnit.Framework;
 using RabbitMQ.Client;
@@ -20,7 +21,7 @@ namespace EasyNetQ.Tests.AMQP
         }
 
         [Test]
-        public void Should_convert_properties()
+        public void Should_convert_to_properties()
         {
             var messageProperties = new EasyNetQ.AMQP.MessageProperties
             {
@@ -85,6 +86,47 @@ namespace EasyNetQ.Tests.AMQP
             basicProperties.IsHeadersPresent().ShouldBeTrue();
             basicProperties.Headers["Key1"].ShouldEqual("Value1");
             basicProperties.Headers["Key2"].ShouldEqual("Value2");
+        }
+
+        [Test]
+        public void Should_convert_from_basic_properties()
+        {
+            basicProperties.AppId = "my_app_id";
+            basicProperties.DeliveryMode = 1;
+            basicProperties.MessageId = "my_message_id";
+
+            var messageProperties = PropertyConverter.ConvertFromBasicProperties(basicProperties);
+
+            messageProperties.AppId.IsSet.ShouldBeTrue();
+            messageProperties.DeliveryMode.IsSet.ShouldBeTrue();
+            messageProperties.MessageId.IsSet.ShouldBeTrue();
+        }
+
+        [Test]
+        public void Should_convert_from_timestamp()
+        {
+            basicProperties.Timestamp = new AmqpTimestamp(1355875200);
+
+            var messageProperties = PropertyConverter.ConvertFromBasicProperties(basicProperties);
+
+            messageProperties.Timestamp.IsSet.ShouldBeTrue();
+            messageProperties.Timestamp.Value.ShouldEqual(new DateTime(2012, 12, 19, 0, 0, 0, DateTimeKind.Utc));
+        }
+
+        [Test]
+        public void Should_convert_from_headers()
+        {
+            basicProperties.Headers = new Hashtable
+            {
+                {"key1", "value1"}, 
+                {"key2", "value2"}
+            };
+
+            var messageProperties = PropertyConverter.ConvertFromBasicProperties(basicProperties);
+
+            messageProperties.Headers.IsSet.ShouldBeTrue();
+            messageProperties.Headers.Value["key1"].ShouldEqual("value1");
+            messageProperties.Headers.Value["key2"].ShouldEqual("value2");
         }
     }
 

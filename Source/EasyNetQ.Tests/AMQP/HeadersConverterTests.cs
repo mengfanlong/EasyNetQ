@@ -26,7 +26,7 @@ namespace EasyNetQ.Tests.AMQP
                 { "Key2", "Value2" }
             };
 
-            var dictionary = (IDictionary) headersConverter.Convert(headers);
+            var dictionary = (IDictionary) headersConverter.ConvertFromEasyNetQValue(headers);
 
             dictionary["Key1"].ShouldEqual("Value1");
             dictionary["Key2"].ShouldEqual("Value2");

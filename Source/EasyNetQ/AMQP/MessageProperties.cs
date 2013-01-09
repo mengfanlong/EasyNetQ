@@ -68,6 +68,7 @@ namespace EasyNetQ.AMQP
         bool IsSet { get; }
         void Clear();
         object GetValue();
+        void SetValue(object value);
     }
 
     public class PropertyValue<T> : IPropertyValue
@@ -83,6 +84,11 @@ namespace EasyNetQ.AMQP
         public object GetValue()
         {
             return Value;
+        }
+
+        public void SetValue(object value)
+        {
+            Value = (T) value;
         }
 
         public T Value
