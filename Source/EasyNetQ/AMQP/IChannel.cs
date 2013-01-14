@@ -4,6 +4,8 @@ namespace EasyNetQ.AMQP
 {
     public interface IChannel : IDisposable
     {
+        event Action ChannelClosed;
+
         void Declare(IExchange exchange);
         bool Exists(IExchange exchange);
         void Delete(IExchange exchange);

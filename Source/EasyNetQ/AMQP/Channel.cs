@@ -16,12 +16,21 @@ namespace EasyNetQ.AMQP
             }
 
             this.model = model;
+            model.ModelShutdown += (model1, reason) =>
+            {
+                if (ChannelClosed != null)
+                {
+                    ChannelClosed();
+                }
+            };
         }
 
         public void Dispose()
         {
             model.Dispose();
         }
+
+        public event Action ChannelClosed;
 
         public void Declare(IExchange exchange)
         {
@@ -291,7 +300,7 @@ namespace EasyNetQ.AMQP
 
             var basicConsumer = new EasyNetQBasicConsumer(consumer, this);
 
-            model.BasicConsume(
+            var consumerTag = model.BasicConsume(
                 settings.Queue.Name,
                 settings.NoAck,
                 settings.ConsumerTag,

@@ -39,6 +39,11 @@ namespace EasyNetQ.AMQP
             return connection.CreateModel();
         }
 
+        public void Close()
+        {
+            connection.Close();
+        }
+
         public IChannel OpenChannel()
         {
             return OpenChannel(new ChannelSettings());

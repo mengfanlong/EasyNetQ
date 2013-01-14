@@ -1,5 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
+using System;
 using System.Collections;
 using EasyNetQ.AMQP;
 using NUnit.Framework;
@@ -265,6 +266,17 @@ namespace EasyNetQ.Tests.AMQP
                 Arg<IDictionary>.Matches(dictionary =>
                     (string)dictionary["key1"] == "value1" &&
                     (string)dictionary["key2"] == "value2")));
+        }
+
+        [Test]
+        public void Should_fire_ChannlClosedEvent_when_model_shutdown_fires()
+        {
+            var closedFired = false;
+            channel.ChannelClosed += () => closedFired = true;
+
+            model.Raise(x => x.ModelShutdown += null, model, new ShutdownEventArgs(ShutdownInitiator.Peer, 0, ""));
+
+            closedFired.ShouldBeTrue();
         }
     }
 }

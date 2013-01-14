@@ -68,10 +68,12 @@
     <Compile Include="AMQP\IHandler.cs" />
     <Compile Include="AMQP\IHandlerSelector.cs" />
     <Compile Include="AMQP\IPersistentConnection.cs" />
+    <Compile Include="AMQP\IPersistentConsumer.cs" />
     <Compile Include="AMQP\IQueue.cs" />
     <Compile Include="AMQP\Message.cs" />
     <Compile Include="AMQP\MessageDeliveryContext.cs" />
     <Compile Include="AMQP\MessageProperties.cs" />
+    <Compile Include="AMQP\PersistentConsumer.cs" />
     <Compile Include="AMQP\PropertyConverter.cs" />
     <Compile Include="AMQP\PublishSettings.cs" />
     <Compile Include="AMQP\QueueDeclareResult.cs" />

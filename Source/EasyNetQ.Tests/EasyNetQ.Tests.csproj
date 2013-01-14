@@ -84,6 +84,7 @@
     <Compile Include="AMQP\AmqpIntegrationTests.cs" />
     <Compile Include="AMQP\MessagePropertiesTests.cs" />
     <Compile Include="AMQP\PersistentConnectionTests.cs" />
+    <Compile Include="AMQP\PersistentConsumerTests.cs" />
     <Compile Include="AMQP\PropertyConverterTests.cs" />
     <Compile Include="AMQP\PublishTests.cs" />
     <Compile Include="AMQP\QueueTests.cs" />

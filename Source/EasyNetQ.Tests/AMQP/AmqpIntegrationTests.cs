@@ -71,6 +71,7 @@ namespace EasyNetQ.Tests.AMQP
         }
 
         [Test]
+        [Explicit("Run this test after placing a message on the queue by running the test above")]
         public void Should_be_able_to_consume()
         {
             var autoResetEvent = new AutoResetEvent(false);
@@ -83,27 +84,53 @@ namespace EasyNetQ.Tests.AMQP
                 {
                     ConsumerTag = Guid.NewGuid().ToString()
                 };
-                var loop = new QueueingConsumerLoop();
-                var handlerSelector = new BasicHandlerSelector();
-                handlerSelector.SetHandler(message =>
-                {
-                    var stringMessage = Encoding.UTF8.GetString(message.Body);
-                    Console.Out.WriteLine("Got Message: '{0}'", stringMessage);
-                    autoResetEvent.Set();
-                });
-                var executionPolicyBuilder = new DefaultExecutionPolicyBuilder();
 
-                var consumer = new Consumer(
-                    loop,
-                    handlerSelector,
-                    executionPolicyBuilder
-                    );
+                var consumer = CreateConsumer(autoResetEvent);
 
                 channel.StartConsuming(consumer, settings);
 
                 autoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
-
             }
+        }
+
+        [Test]
+        [Explicit("Run this test after placing a message on the queue by running the test above")]
+        public void Should_be_able_to_maintain_a_persisten_consumer()
+        {
+            // first cause a connection bounce
+            ((PersistentConnection)connection).Close();
+
+            var autoResetEvent = new AutoResetEvent(false);
+            var persistentConsumer = new PersistentConsumer(connection);
+
+            var consumer = CreateConsumer(autoResetEvent);
+            var settings = new ConsumerSettings(queue)
+            {
+                ConsumerTag = Guid.NewGuid().ToString()
+            };
+            persistentConsumer.StartConsuming(consumer, settings, new ChannelSettings());
+
+            autoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+        }
+
+        private static Consumer CreateConsumer(EventWaitHandle waitHandle)
+        {
+            var loop = new QueueingConsumerLoop();
+            var handlerSelector = new BasicHandlerSelector();
+            handlerSelector.SetHandler(message =>
+            {
+                var stringMessage = Encoding.UTF8.GetString(message.Body);
+                Console.Out.WriteLine("Got Message: '{0}'", stringMessage);
+                waitHandle.Set();
+            });
+            var executionPolicyBuilder = new DefaultExecutionPolicyBuilder();
+
+            var consumer = new Consumer(
+                loop,
+                handlerSelector,
+                executionPolicyBuilder
+                );
+            return consumer;
         }
     }
 }

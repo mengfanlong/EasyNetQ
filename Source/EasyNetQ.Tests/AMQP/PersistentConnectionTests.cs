@@ -87,7 +87,7 @@ INFO: Connected to RabbitMQ. Broker: 'localhost', Port: 1234, VHost: '/'
         [Test]
         public void Should_start_retry_timer_on_socket_exception()
         {
-            connectionFactory.Stub(x => x.CreateConnection()).Throw(new System.Net.Sockets.SocketException());
+            connectionFactory.Stub(x => x.CreateConnection()).Throw(new System.Net.Sockets.SocketException(0));
             connectionFactory.Stub(x => x.Next()).Return(false);
             connectionFactory.Stub(x => x.Succeeded).Return(false);
             connectionRetryTimer.Stub(x => x.RetryIntervalSeconds).Return(66);
