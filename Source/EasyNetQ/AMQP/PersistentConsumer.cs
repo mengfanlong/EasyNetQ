@@ -27,16 +27,21 @@ namespace EasyNetQ.AMQP
 
                 channel.StartConsuming(consumer, settings);
             }
-            catch (RabbitMQ.Client.Exceptions.OperationInterruptedException)
+            catch (Exception)
             {
-                Action connectionOpenHandler = null;
-                connectionOpenHandler = () =>
-                {
-                    connection.Connected -= connectionOpenHandler;
-                    StartConsuming(consumer, settings, channelSettings);
-                };
-                connection.Connected += connectionOpenHandler;
+                HandleExceptionOnOpenChannel(consumer, settings, channelSettings);
             }
+        }
+
+        public void HandleExceptionOnOpenChannel(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings)
+        {
+            Action connectionOpenHandler = null;
+            connectionOpenHandler = () =>
+            {
+                connection.Connected -= connectionOpenHandler;
+                StartConsuming(consumer, settings, channelSettings);
+            };
+            connection.Connected += connectionOpenHandler;
         }
 
         public void Dispose()

@@ -97,9 +97,6 @@ namespace EasyNetQ.Tests.AMQP
         [Explicit("Run this test after placing a message on the queue by running the test above")]
         public void Should_be_able_to_maintain_a_persisten_consumer()
         {
-            // first cause a connection bounce
-            ((PersistentConnection)connection).Close();
-
             var autoResetEvent = new AutoResetEvent(false);
             var persistentConsumer = new PersistentConsumer(connection);
 
@@ -108,9 +105,15 @@ namespace EasyNetQ.Tests.AMQP
             {
                 ConsumerTag = Guid.NewGuid().ToString()
             };
+
+            // first cause a connection bounce
+            ((PersistentConnection)connection).Close();
+
             persistentConsumer.StartConsuming(consumer, settings, new ChannelSettings());
+            Console.Out.WriteLine("Conusmer started");
 
             autoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+//            Thread.Sleep(TimeSpan.FromSeconds(60));
         }
 
         private static Consumer CreateConsumer(EventWaitHandle waitHandle)
