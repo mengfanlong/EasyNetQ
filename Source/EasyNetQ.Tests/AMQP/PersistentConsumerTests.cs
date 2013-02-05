@@ -85,8 +85,27 @@ namespace EasyNetQ.Tests.AMQP
         [Test]
         public void Should_dispose_open_channels_and_disconnect_event_handlers_on_dispose()
         {
-            // TODO
+            connection.Stub(x => x.OpenChannel(Arg<ChannelSettings>.Is.Anything)).Return(channel);
+            persistentConsumer.StartConsuming(consumer, settings);
+
             persistentConsumer.Dispose();
+
+            channel.AssertWasCalled(x => x.Dispose());
+        }
+
+        [Test]
+        public void Should_be_able_to_stop_consuming()
+        {
+            var channelConsumerHandle = MockRepository.GenerateStub<IConsumerHandle>();
+
+            connection.Stub(x => x.OpenChannel(Arg<ChannelSettings>.Is.Anything)).Return(channel);
+            channel.Stub(x => x.StartConsuming(consumer, settings)).Return(channelConsumerHandle);
+
+            var consumerHandle = persistentConsumer.StartConsuming(consumer, settings);
+
+            consumerHandle.Dispose();
+            
+            channelConsumerHandle.AssertWasCalled(x => x.Dispose());
         }
     }
 }

@@ -109,7 +109,7 @@ namespace EasyNetQ.Tests.AMQP
             // first cause a connection bounce
             ((PersistentConnection)connection).Close();
 
-            persistentConsumer.StartConsuming(consumer, settings, new ChannelSettings());
+            persistentConsumer.StartConsuming(consumer, settings);
             Console.Out.WriteLine("Conusmer started");
 
             autoResetEvent.WaitOne(TimeSpan.FromSeconds(10));

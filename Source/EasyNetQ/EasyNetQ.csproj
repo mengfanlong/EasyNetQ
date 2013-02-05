@@ -54,6 +54,7 @@
     <Compile Include="AMQP\ChannelSettings.cs" />
     <Compile Include="AMQP\ConnectionRetryTimer.cs" />
     <Compile Include="AMQP\Consumer.cs" />
+    <Compile Include="AMQP\ConsumerHandle.cs" />
     <Compile Include="AMQP\ConsumerSettings.cs" />
     <Compile Include="AMQP\DefaultExecutionPolicyBuilder.cs" />
     <Compile Include="AMQP\EasyNetQAmqpException.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="AMQP\IChannel.cs" />
     <Compile Include="AMQP\IChannelFactory.cs" />
     <Compile Include="AMQP\IConnectionRetryTimer.cs" />
+    <Compile Include="AMQP\IConsumerHandle.cs" />
     <Compile Include="AMQP\IConsumerLoop.cs" />
     <Compile Include="AMQP\IExchange.cs" />
     <Compile Include="AMQP\IExecutionPolicyBuilder.cs" />

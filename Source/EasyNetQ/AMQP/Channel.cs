@@ -287,7 +287,7 @@ namespace EasyNetQ.AMQP
                 );
         }
 
-        public void StartConsuming(IConsumer consumer, ConsumerSettings settings)
+        public IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings)
         {
             if(consumer == null)
             {
@@ -308,6 +308,8 @@ namespace EasyNetQ.AMQP
                 settings.Exclusive,
                 settings.Arguments.ToLegacyDictionary(),
                 basicConsumer);
+
+            return new ConsumerHandle(consumerTag, model);
         }
 
         public void Acknowledge(ulong deliveryTag, bool multiple)

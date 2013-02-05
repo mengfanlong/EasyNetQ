@@ -1,18 +1,41 @@
 using System;
+using System.Collections.Generic;
 
 namespace EasyNetQ.AMQP
 {
     public class PersistentConsumer : IPersistentConsumer
     {
         private readonly IPersistentConnection connection;
+        private readonly IList<IChannel> openChannels = new List<IChannel>();
 
         public PersistentConsumer(IPersistentConnection connection)
         {
             this.connection = connection;
         }
 
-        public void StartConsuming(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings)
+        public IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings)
         {
+            return StartConsuming(consumer, settings, new ChannelSettings());
+        }
+
+        public IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings)
+        {
+            var consumerHandle = new PersistentConsumerHandle();
+            StartConsumingInternal(consumer, settings, channelSettings, consumerHandle);
+            return consumerHandle;
+        }
+
+        private void StartConsumingInternal(
+            IConsumer consumer, 
+            ConsumerSettings settings, 
+            ChannelSettings channelSettings,
+            PersistentConsumerHandle consumerHandle)
+        {
+            if (disposed)
+            {
+                throw new EasyNetQAmqpException("PersistentConsumer is disposed");
+            }
+
             try
             {
                 var channel = connection.OpenChannel(channelSettings);
@@ -21,32 +44,54 @@ namespace EasyNetQ.AMQP
                 {
                     channel.ChannelClosed -= channelClosedHandler;
                     channel.Dispose();
-                    StartConsuming(consumer, settings, channelSettings);
+                    openChannels.Remove(channel);
+                    StartConsumingInternal(consumer, settings, channelSettings, consumerHandle);
                 };
                 channel.ChannelClosed += channelClosedHandler;
 
-                channel.StartConsuming(consumer, settings);
+                consumerHandle.SetHandle(channel.StartConsuming(consumer, settings));
+                openChannels.Add(channel);
+
             }
             catch (Exception)
             {
-                HandleExceptionOnOpenChannel(consumer, settings, channelSettings);
+                Action connectionOpenHandler = null;
+                connectionOpenHandler = () =>
+                {
+                    connection.Connected -= connectionOpenHandler;
+                    StartConsumingInternal(consumer, settings, channelSettings, consumerHandle);
+                };
+                connection.Connected += connectionOpenHandler;
             }
         }
 
-        public void HandleExceptionOnOpenChannel(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings)
-        {
-            Action connectionOpenHandler = null;
-            connectionOpenHandler = () =>
-            {
-                connection.Connected -= connectionOpenHandler;
-                StartConsuming(consumer, settings, channelSettings);
-            };
-            connection.Connected += connectionOpenHandler;
-        }
+        private bool disposed = false;
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            disposed = true;
+            foreach (var openChannel in openChannels)
+            {
+                openChannel.Dispose();
+            }
+        }
+    }
+
+    public class PersistentConsumerHandle : IConsumerHandle
+    {
+        private IConsumerHandle consumerHandle = null;
+
+        public void Dispose()
+        {
+            if (consumerHandle != null)
+            {
+                consumerHandle.Dispose();
+            }
+        }
+
+        public void SetHandle(IConsumerHandle consumerHandle)
+        {
+            this.consumerHandle = consumerHandle;
         }
     }
 }

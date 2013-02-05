@@ -4,6 +4,7 @@ namespace EasyNetQ.AMQP
 {
     public interface IPersistentConsumer : IDisposable
     {
-        void StartConsuming(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings);
+        IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings);
+        IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings);
     }
 }

@@ -54,6 +54,39 @@ namespace EasyNetQ.Tests.AMQP
         }
 
         [Test]
+        public void Should_be_able_to_stop_consuming()
+        {
+            model.Stub(x => x.BasicConsume(
+                Arg<string>.Is.Equal("my_queue"),
+                Arg<bool>.Is.Equal(true),               // NoAck
+                Arg<string>.Is.Equal("consumer_tag"),
+                Arg<bool>.Is.Equal(false),              // NoLocal
+                Arg<bool>.Is.Equal(true),               // Exclusive
+                Arg<IDictionary>.Matches(args => 
+                    (string)args["key1"] == "value1" && 
+                    (string)args["key2"] == "value2"),
+                Arg<IBasicConsumer>.Matches(c => c is EasyNetQBasicConsumer)))
+                .Return("the_consumer_tag");
+
+            var queue = Queue.Create("my_queue");
+            var settings = new ConsumerSettings(queue)
+            {
+                ConsumerTag = "consumer_tag",
+                NoAck = true,
+                Exclusive = true
+            };
+            settings.Arguments.Add("key1", "value1");
+            settings.Arguments.Add("key2", "value2");
+
+            var consumer = MockRepository.GenerateStub<IConsumer>();
+
+            var consumerHandle = channel.StartConsuming(consumer, settings);
+            consumerHandle.Dispose();
+
+            model.AssertWasCalled(x => x.BasicCancel("the_consumer_tag"));
+        }
+
+        [Test]
         public void Should_be_able_to_ack()
         {
             const ulong deliveryTag = 222;

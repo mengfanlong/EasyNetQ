@@ -21,7 +21,7 @@ namespace EasyNetQ.AMQP
         void UnBind(IExchange source, IExchange destination, string routingKey);
         void UnBind(IExchange exchange, IQueue queue, string routingKey, Arguments arguments);
         void Publish(IRawMessage message, PublishSettings settings);
-        void StartConsuming(IConsumer consumer, ConsumerSettings settings);
+        IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings);
         void Acknowledge(ulong deliveryTag, bool multiple);
         void Reject(ulong deliveryTag, bool requeue);
     }
