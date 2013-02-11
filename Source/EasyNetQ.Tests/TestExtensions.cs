@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using Rhino.Mocks;
 
 namespace EasyNetQ.Tests
 {
@@ -80,6 +81,15 @@ namespace EasyNetQ.Tests
         {
             Assert.AreEqual(collection.Count(), 0,
             string.Format("Expected collection to be empty, but had {0} items", collection.Count()));
+        }
+
+        public static void ClearBehavior<T>(this T stub)
+        {
+            // switch back to record then to replay
+            // this clears existing stubs in RhinoMocks
+
+            stub.BackToRecord(BackToRecordOptions.All);
+            stub.Replay();
         }
     }
 }

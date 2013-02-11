@@ -263,7 +263,7 @@ namespace EasyNetQ.AMQP
             model.QueueUnbind(queue.Name, exchange.Name, routingKey, arguments.ToLegacyDictionary());
         }
 
-        public void Publish(IRawMessage message, PublishSettings settings)
+        public void Publish(IRawMessage message, IPublishSettings settings)
         {
             if(message == null)
             {
@@ -287,7 +287,7 @@ namespace EasyNetQ.AMQP
                 );
         }
 
-        public IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings)
+        public IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings)
         {
             if(consumer == null)
             {

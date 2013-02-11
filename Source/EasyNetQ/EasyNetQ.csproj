@@ -70,6 +70,7 @@
     <Compile Include="AMQP\IExecutionPolicyBuilder.cs" />
     <Compile Include="AMQP\IHandler.cs" />
     <Compile Include="AMQP\IHandlerSelector.cs" />
+    <Compile Include="AMQP\IPersistentChannel.cs" />
     <Compile Include="AMQP\IPersistentConnection.cs" />
     <Compile Include="AMQP\IPersistentConsumer.cs" />
     <Compile Include="AMQP\IQueue.cs" />
@@ -126,6 +127,9 @@
     <Compile Include="MessageReceivedInfo.cs" />
     <Compile Include="MessageProperties.cs" />
     <Compile Include="AMQP\PersistentConnection.cs" />
+    <Compile Include="Patterns\EasyNetQPublishException.cs" />
+    <Compile Include="Patterns\IPublishDispatcher.cs" />
+    <Compile Include="Patterns\PublishDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirms.cs" />
     <Compile Include="QueueingConsumerFactory.cs" />

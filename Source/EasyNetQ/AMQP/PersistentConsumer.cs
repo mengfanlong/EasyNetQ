@@ -1,79 +1,60 @@
 using System;
-using System.Collections.Generic;
 
 namespace EasyNetQ.AMQP
 {
     public class PersistentConsumer : IPersistentConsumer
     {
-        private readonly IPersistentConnection connection;
-        private readonly IList<IChannel> openChannels = new List<IChannel>();
+        private readonly IPersistentConnection persistentConnection;
+        private readonly IPersistentChannel persistentChannel;
 
-        public PersistentConsumer(IPersistentConnection connection)
+        public PersistentConsumer(IPersistentConnection persistentConnection, IPersistentChannel persistentChannel)
         {
-            this.connection = connection;
+            if(persistentConnection == null)
+            {
+                throw new ArgumentNullException("persistentConnection");
+            }
+            if(persistentChannel == null)
+            {
+                throw new ArgumentNullException("persistentChannel");
+            }
+
+            this.persistentConnection = persistentConnection;
+            this.persistentChannel = persistentChannel;
         }
 
-        public IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings)
+        public IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings)
         {
             return StartConsuming(consumer, settings, new ChannelSettings());
         }
 
-        public IConsumerHandle StartConsuming(IConsumer consumer, ConsumerSettings settings, ChannelSettings channelSettings)
+        public IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings, IChannelSettings channelSettings)
         {
+            if(consumer == null)
+            {
+                throw new ArgumentNullException("consumer");
+            }
+            if(settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
+            if(channelSettings == null)
+            {
+                throw new ArgumentNullException("channelSettings");
+            }
+
             var consumerHandle = new PersistentConsumerHandle();
-            StartConsumingInternal(consumer, settings, channelSettings, consumerHandle);
+
+            persistentChannel.ChannelOpened += () => 
+                consumerHandle.SetHandle(persistentChannel.StartConsuming(consumer, settings));
+            
+            persistentChannel.Initialise(persistentConnection, channelSettings);
+
             return consumerHandle;
         }
 
-        private void StartConsumingInternal(
-            IConsumer consumer, 
-            ConsumerSettings settings, 
-            ChannelSettings channelSettings,
-            PersistentConsumerHandle consumerHandle)
-        {
-            if (disposed)
-            {
-                throw new EasyNetQAmqpException("PersistentConsumer is disposed");
-            }
-
-            try
-            {
-                var channel = connection.OpenChannel(channelSettings);
-                Action channelClosedHandler = null;
-                channelClosedHandler = () =>
-                {
-                    channel.ChannelClosed -= channelClosedHandler;
-                    channel.Dispose();
-                    openChannels.Remove(channel);
-                    StartConsumingInternal(consumer, settings, channelSettings, consumerHandle);
-                };
-                channel.ChannelClosed += channelClosedHandler;
-
-                consumerHandle.SetHandle(channel.StartConsuming(consumer, settings));
-                openChannels.Add(channel);
-
-            }
-            catch (Exception)
-            {
-                Action connectionOpenHandler = null;
-                connectionOpenHandler = () =>
-                {
-                    connection.Connected -= connectionOpenHandler;
-                    StartConsumingInternal(consumer, settings, channelSettings, consumerHandle);
-                };
-                connection.Connected += connectionOpenHandler;
-            }
-        }
-
-        private bool disposed = false;
-
         public void Dispose()
         {
-            disposed = true;
-            foreach (var openChannel in openChannels)
-            {
-                openChannel.Dispose();
-            }
+            persistentChannel.Dispose();
         }
     }
 
@@ -91,6 +72,11 @@ namespace EasyNetQ.AMQP
 
         public void SetHandle(IConsumerHandle consumerHandle)
         {
+            if(consumerHandle == null)
+            {
+                throw new ArgumentNullException("consumerHandle");
+            }
+
             this.consumerHandle = consumerHandle;
         }
     }

@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace EasyNetQ.Tests.AMQP
 {
     [TestFixture]
-    [Explicit("Required a RabbitMQ server on localhost to work")]
+    [Explicit("Requires a RabbitMQ server on localhost to work")]
     public class AmqpIntegrationTests
     {
         private IPersistentConnection connection;
@@ -98,7 +98,8 @@ namespace EasyNetQ.Tests.AMQP
         public void Should_be_able_to_maintain_a_persisten_consumer()
         {
             var autoResetEvent = new AutoResetEvent(false);
-            var persistentConsumer = new PersistentConsumer(connection);
+
+            var persistentConsumer = new PersistentConsumer(connection, new PersistentChannel());
 
             var consumer = CreateConsumer(autoResetEvent);
             var settings = new ConsumerSettings(queue)

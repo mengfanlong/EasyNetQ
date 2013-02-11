@@ -6,7 +6,7 @@ namespace EasyNetQ.AMQP
 {
     public class ChannelFactory : IChannelFactory
     {
-        public IChannel OpenChannel(IConnection connection, ChannelSettings settings)
+        public IChannel OpenChannel(IConnection connection, IChannelSettings settings)
         {
             if(connection == null)
             {

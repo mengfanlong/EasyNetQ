@@ -240,7 +240,7 @@ namespace EasyNetQ.Tests
             {
                 errorStrategy.HandleConsumerError(deliverArgs, new Exception());
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 // swallow
             }

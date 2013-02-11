@@ -25,7 +25,7 @@ namespace EasyNetQ.Tests.AMQP
             connection = MockRepository.GenerateStub<IPersistentConnection>();
             channel = MockRepository.GenerateStub<IChannel>();
 
-            persistentConsumer = new PersistentConsumer(connection);
+            persistentConsumer = new PersistentConsumer(connection, new PersistentChannel());
         }
 
         [Test]
@@ -40,11 +40,11 @@ namespace EasyNetQ.Tests.AMQP
         [Test]
         public void Should_restart_consumer_on_new_channel_when_connection_is_closed()
         {
-            connection.Stub(x => x.OpenChannel(Arg<ChannelSettings>.Is.Anything)).Return(channel);
+            connection.Stub(x => x.OpenChannel(Arg<IChannelSettings>.Is.Anything)).Return(channel);
 
             var numberOfStartConsumingCalls = 0;
             channel.Stub(x => x.StartConsuming(consumer, settings))
-                .Callback<IConsumer, ConsumerSettings>((c, s) =>
+                .Callback<IConsumer, IConsumerSettings>((c, s) =>
                 {
                     numberOfStartConsumingCalls++;
                     return true;
@@ -62,8 +62,8 @@ namespace EasyNetQ.Tests.AMQP
         {
             var isFirstCall = true;
 
-            connection.Stub(x => x.OpenChannel(Arg<ChannelSettings>.Is.Anything))
-                .Callback<ChannelSettings>(s =>
+            connection.Stub(x => x.OpenChannel(Arg<IChannelSettings>.Is.Anything))
+                .Callback<IChannelSettings>(s =>
                 {
                     if (isFirstCall)
                     {
@@ -74,6 +74,9 @@ namespace EasyNetQ.Tests.AMQP
                     return true;
                 })
                 .Return(channel);
+
+            channel.Stub(x => x.StartConsuming(consumer, settings)).Return(
+                MockRepository.GenerateStub<IConsumerHandle>());
 
             persistentConsumer.StartConsuming(consumer, settings, channelSettings);
 
@@ -86,6 +89,9 @@ namespace EasyNetQ.Tests.AMQP
         public void Should_dispose_open_channels_and_disconnect_event_handlers_on_dispose()
         {
             connection.Stub(x => x.OpenChannel(Arg<ChannelSettings>.Is.Anything)).Return(channel);
+            channel.Stub(x => x.StartConsuming(consumer, settings)).Return(
+                MockRepository.GenerateStub<IConsumerHandle>());
+
             persistentConsumer.StartConsuming(consumer, settings);
 
             persistentConsumer.Dispose();

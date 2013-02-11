@@ -49,7 +49,7 @@ namespace EasyNetQ.AMQP
             return OpenChannel(new ChannelSettings());
         }
 
-        public IChannel OpenChannel(ChannelSettings settings)
+        public IChannel OpenChannel(IChannelSettings settings)
         {
             if (!IsConnected)
             {

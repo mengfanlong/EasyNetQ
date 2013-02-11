@@ -84,6 +84,7 @@
     <Compile Include="AMQP\HeadersConverterTests.cs" />
     <Compile Include="AMQP\AmqpIntegrationTests.cs" />
     <Compile Include="AMQP\MessagePropertiesTests.cs" />
+    <Compile Include="AMQP\PersistentChannelTests.cs" />
     <Compile Include="AMQP\PersistentConnectionTests.cs" />
     <Compile Include="AMQP\PersistentConsumerTests.cs" />
     <Compile Include="AMQP\PropertyConverterTests.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="MockModel.cs" />
     <Compile Include="ModelCleanupTests.cs" />
     <Compile Include="MultiThreadedPublisherTests.cs" />
+    <Compile Include="Patterns\PublishDispatcherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirmsTests.cs" />
     <Compile Include="PublishSubscribeTests.cs" />

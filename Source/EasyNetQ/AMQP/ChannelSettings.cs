@@ -1,6 +1,12 @@
 namespace EasyNetQ.AMQP
 {
-    public class ChannelSettings
+    public interface IChannelSettings
+    {
+        ushort PrefetchCount { get; }
+        bool PublisherConfirmsOn { get; }
+    }
+
+    public class ChannelSettings : IChannelSettings
     {
         public ushort PrefetchCount { get; set; }
         public bool PublisherConfirmsOn { get; set; }

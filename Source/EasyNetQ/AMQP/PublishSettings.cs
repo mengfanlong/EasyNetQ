@@ -2,7 +2,15 @@
 
 namespace EasyNetQ.AMQP
 {
-    public class PublishSettings
+    public interface IPublishSettings
+    {
+        IExchange Exchange { get; }
+        string RoutingKey { get; }
+        bool Mandatory { get; }
+        bool Immediate { get; }
+    }
+
+    public class PublishSettings : IPublishSettings
     {
         public IExchange Exchange { get; private set; }
         public string RoutingKey { get; private set; }

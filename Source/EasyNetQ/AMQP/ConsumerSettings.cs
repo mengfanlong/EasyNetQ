@@ -2,7 +2,16 @@
 
 namespace EasyNetQ.AMQP
 {
-    public class ConsumerSettings
+    public interface IConsumerSettings
+    {
+        IQueue Queue { get; }
+        string ConsumerTag { get; }
+        bool NoAck { get; }
+        bool Exclusive { get; }
+        Arguments Arguments { get; }
+    }
+
+    public class ConsumerSettings : IConsumerSettings
     {
         public IQueue Queue { get; private set; }
         public string ConsumerTag { get; set; }

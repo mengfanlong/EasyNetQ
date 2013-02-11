@@ -11,6 +11,6 @@ namespace EasyNetQ.AMQP
         IModel CreateModel();
         void TryToConnect();
         IChannel OpenChannel();
-        IChannel OpenChannel(ChannelSettings settings);
+        IChannel OpenChannel(IChannelSettings settings);
     }
 }
