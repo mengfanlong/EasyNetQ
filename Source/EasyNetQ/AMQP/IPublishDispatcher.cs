@@ -1,7 +1,6 @@
 ﻿using System;
-using EasyNetQ.AMQP;
 
-namespace EasyNetQ.Patterns
+namespace EasyNetQ.AMQP
 {
     /// <summary>
     /// Represents a thread safe publisher. It is initialized with a single channel, but
@@ -12,8 +11,7 @@ namespace EasyNetQ.Patterns
         /// <summary>
         /// Set the channel to publish on.
         /// </summary>
-        /// <param name="channel"></param>
-        void Initialize(IChannel channel);
+        void Initialize(IPersistentConnection connection, IChannelSettings channelSettings);
 
         /// <summary>
         /// Thread-safe publish method

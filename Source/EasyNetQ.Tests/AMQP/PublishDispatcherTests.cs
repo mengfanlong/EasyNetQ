@@ -1,27 +1,29 @@
 ﻿// ReSharper disable InconsistentNaming
 
-using System.Collections.Concurrent;
 using System.Threading;
 using EasyNetQ.AMQP;
-using EasyNetQ.Patterns;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace EasyNetQ.Tests.Patterns
+namespace EasyNetQ.Tests.AMQP
 {
     [TestFixture]
     public class PublishDispatcherTests
     {
         private IPublishDispatcher publishDispatcher;
-        private IChannel channel;
+        private IPersistentChannel persistentChannel;
+        private IChannelSettings channelSettings;
+        private IPersistentConnection persistentConnection;
 
         [SetUp]
         public void SetUp()
         {
-            channel = MockRepository.GenerateStub<IChannel>();
+            persistentChannel = MockRepository.GenerateStub<IPersistentChannel>();
+            channelSettings = MockRepository.GenerateStub<IChannelSettings>();
+            persistentConnection = MockRepository.GenerateStub<IPersistentConnection>();
 
-            publishDispatcher = new PublishDispatcher();
-            publishDispatcher.Initialize(channel);
+            publishDispatcher = new PublishDispatcher(persistentChannel);
+            publishDispatcher.Initialize(persistentConnection, channelSettings);
         }
 
         [TearDown]
@@ -38,7 +40,7 @@ namespace EasyNetQ.Tests.Patterns
             var reset = new AutoResetEvent(false);
             var channelPublishWasCalled = false;
 
-            channel.Stub(x => x.Publish(message, settings)).Callback<IRawMessage, IPublishSettings>((m, s) =>
+            persistentChannel.Stub(x => x.Publish(message, settings)).Callback<IRawMessage, IPublishSettings>((m, s) =>
             {
                 m.ShouldBeTheSameAs(message);
                 s.ShouldBeTheSameAs(settings);
@@ -64,15 +66,6 @@ namespace EasyNetQ.Tests.Patterns
             publishDispatcher.Dispose();
 
             publishDispatcher.Publish(message, settings);
-        }
-
-        public void BlockingCollectionWithCancellationTokenSpike()
-        {
-            var source = new CancellationTokenSource();
-            var queue = new BlockingCollection<int>();
-
-            source.Cancel();
-            queue.Take(source.Token);
         }
     }
 }

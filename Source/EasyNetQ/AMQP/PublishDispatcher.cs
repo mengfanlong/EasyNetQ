@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using EasyNetQ.AMQP;
 
-namespace EasyNetQ.Patterns
+namespace EasyNetQ.AMQP
 {
     /// <summary>
     /// Creates an internal queue which marshalls publish calls onto a single thread
@@ -11,7 +10,7 @@ namespace EasyNetQ.Patterns
     /// </summary>
     public class PublishDispatcher : IPublishDispatcher
     {
-        private IChannel channel;
+        private readonly IPersistentChannel persistentChannel;
         private bool isInitialised;
         private readonly BlockingCollection<PublishContext> publishQueue = 
             new BlockingCollection<PublishContext>();
@@ -19,11 +18,16 @@ namespace EasyNetQ.Patterns
         private Thread publishThread;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public void Initialize(IChannel channel)
+        public PublishDispatcher(IPersistentChannel persistentChannel)
         {
-            if(channel == null)
+            this.persistentChannel = persistentChannel;
+        }
+
+        public void Initialize(IPersistentConnection connection, IChannelSettings channelSettings)
+        {
+            if(channelSettings == null)
             {
-                throw new ArgumentNullException("channel");
+                throw new ArgumentNullException("channelSettings");
             }
 
             if (cancellationTokenSource.IsCancellationRequested)
@@ -31,7 +35,7 @@ namespace EasyNetQ.Patterns
                 throw new EasyNetQPublishException("Cannot initialize PublishDispatcher, it is already disposed.");
             }
 
-            this.channel = channel;
+            persistentChannel.Initialise(connection, channelSettings);
             publishThread = new Thread(StartInternalPublishLoop);
             publishThread.Start();
             isInitialised = true;
@@ -75,7 +79,7 @@ namespace EasyNetQ.Patterns
                     var publishContext = publishQueue.Take(cancellationTokenSource.Token);
                     try
                     {
-                        channel.Publish(publishContext.RawMessage, publishContext.PublishSettings);
+                        persistentChannel.Publish(publishContext.RawMessage, publishContext.PublishSettings);
                     }
                     catch (InvalidOperationException)
                     {

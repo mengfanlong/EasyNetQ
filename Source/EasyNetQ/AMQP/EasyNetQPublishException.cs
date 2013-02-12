@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace EasyNetQ.Patterns
+namespace EasyNetQ.AMQP
 {
     [Serializable]
     public class EasyNetQPublishException : Exception

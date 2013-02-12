@@ -127,9 +127,9 @@
     <Compile Include="MessageReceivedInfo.cs" />
     <Compile Include="MessageProperties.cs" />
     <Compile Include="AMQP\PersistentConnection.cs" />
-    <Compile Include="Patterns\EasyNetQPublishException.cs" />
-    <Compile Include="Patterns\IPublishDispatcher.cs" />
-    <Compile Include="Patterns\PublishDispatcher.cs" />
+    <Compile Include="AMQP\EasyNetQPublishException.cs" />
+    <Compile Include="AMQP\IPublishDispatcher.cs" />
+    <Compile Include="AMQP\PublishDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirms.cs" />
     <Compile Include="QueueingConsumerFactory.cs" />
@@ -168,6 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Patterns\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,6 +8,7 @@ namespace EasyNetQ.AMQP
         event Action ChannelClosed;
         void Initialise(IPersistentConnection persistentConnection, IChannelSettings channelSettings);
         IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings);
+        void Publish(IRawMessage rawMessage, IPublishSettings publishSettings);
     }
 
     public class PersistentChannel : IPersistentChannel
@@ -45,6 +46,11 @@ namespace EasyNetQ.AMQP
         public IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings)
         {
             return currentChannel.StartConsuming(consumer, settings);
+        }
+
+        public void Publish(IRawMessage rawMessage, IPublishSettings publishSettings)
+        {
+            currentChannel.Publish(rawMessage, publishSettings);
         }
 
         private void TryOpenChannel()
