@@ -122,6 +122,8 @@
     <Compile Include="ModelCleanupTests.cs" />
     <Compile Include="MultiThreadedPublisherTests.cs" />
     <Compile Include="AMQP\PublishDispatcherTests.cs" />
+    <Compile Include="Patterns\ConsumerPipelineTests.cs" />
+    <Compile Include="Patterns\MessagePipelineSpike.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirmsTests.cs" />
     <Compile Include="PublishSubscribeTests.cs" />
@@ -182,7 +184,6 @@
     <Content Include="LongRunningServer.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Patterns\" />
     <Folder Include="SystemMessages\" />
   </ItemGroup>
   <ItemGroup>
