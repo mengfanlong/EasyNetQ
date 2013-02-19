@@ -35,11 +35,13 @@ namespace EasyNetQ.Tests.AMQP
                 new DefaultClusterHostSelectionStrategy<ConnectionFactoryInfo>()
                 );
 
+            var logger = new ConsoleLogger();
+
             connection = new PersistentConnection(
                 connectionFactory, 
-                new ConsoleLogger(), 
+                logger, 
                 new ConnectionRetryTimer(configuration), 
-                new ChannelFactory());
+                new ChannelFactory(logger));
 
             connection.TryToConnect();
 

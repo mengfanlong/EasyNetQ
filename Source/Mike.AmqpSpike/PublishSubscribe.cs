@@ -31,6 +31,17 @@ namespace Mike.AmqpSpike
             });
         }
 
+        public void PublishMessageToUnknownExchange()
+        {
+            WithChannel.Do(channel =>
+            {
+                var properties = channel.CreateBasicProperties();
+                var message = Encoding.UTF8.GetBytes("Hello World");
+
+                channel.BasicPublish("UnknownExchange", "#", false, false, properties, message);
+            });
+        }
+
         public void GetMessagesForA()
         {
             GetMessagesFor(subscriberA);

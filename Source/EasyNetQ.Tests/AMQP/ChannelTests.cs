@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using EasyNetQ.AMQP;
+using EasyNetQ.Loggers;
 using NUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -21,7 +22,7 @@ namespace EasyNetQ.Tests.AMQP
         public void SetUp()
         {
             model = MockRepository.GenerateStub<IModel>();
-            channel = new Channel(model);
+            channel = new Channel(model, new ConsoleLogger());
         }
 
         [Test]

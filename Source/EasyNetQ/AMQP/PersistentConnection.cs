@@ -125,13 +125,13 @@ namespace EasyNetQ.AMQP
 
         void OnConnectionShutdown(IConnection _, ShutdownEventArgs reason)
         {
-            if (disposed) return;
             OnDisconnected();
 
             // try to reconnect and re-subscribe
             logger.InfoWrite("Disconnected from RabbitMQ Broker. Connection reset by {0}. Reason: '{1}'",
                 reason.Initiator, reason.ReplyText);
 
+            if (disposed) return;
             TryToConnect();
         }
 
@@ -151,7 +151,15 @@ namespace EasyNetQ.AMQP
         {
             if (disposed) return;
             disposed = true;
-            if (connection != null) connection.Dispose();
+            if (connection != null)
+            {
+                connection.Close(0, "Dispose was called on EasyNetQ.AMQP.PersistentConnection");
+                connection.Dispose();
+            }
+            else
+            {
+                logger.DebugWrite("PersistenConnection.Dispose() - connection already null");
+            }
         }
     }
 }

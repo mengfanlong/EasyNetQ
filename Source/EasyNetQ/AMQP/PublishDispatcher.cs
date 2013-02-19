@@ -11,6 +11,10 @@ namespace EasyNetQ.AMQP
     public class PublishDispatcher : IPublishDispatcher
     {
         private readonly IPersistentChannel persistentChannel;
+        private readonly IEasyNetQLogger logger;
+
+        private readonly AutoResetEvent channelErrorWait = new AutoResetEvent(false);
+
         private bool isInitialised;
         private readonly BlockingCollection<PublishContext> publishQueue = 
             new BlockingCollection<PublishContext>();
@@ -18,9 +22,10 @@ namespace EasyNetQ.AMQP
         private Thread publishThread;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public PublishDispatcher(IPersistentChannel persistentChannel)
+        public PublishDispatcher(IPersistentChannel persistentChannel, IEasyNetQLogger logger)
         {
             this.persistentChannel = persistentChannel;
+            this.logger = logger;
         }
 
         public void Initialize(IPersistentConnection connection, IChannelSettings channelSettings)
@@ -81,12 +86,21 @@ namespace EasyNetQ.AMQP
                     {
                         persistentChannel.Publish(publishContext.RawMessage, publishContext.PublishSettings);
                     }
-                    catch (InvalidOperationException)
+                    catch (RabbitMQ.Client.Exceptions.OperationInterruptedException operationInterruptedException)
                     {
-                        // if the publish fails we should probably leave the publish message on the queue
-                        publishQueue.Add(publishContext);
+                        logger.InfoWrite("Exception on publish.{0}", 
+                            operationInterruptedException.ToString());
+
                         // wait a little while before looping and retrying.
-                        Thread.Sleep(TimeSpan.FromSeconds(1));
+                        // but continue if signalled.
+                        channelErrorWait.WaitOne(TimeSpan.FromSeconds(1));
+
+                        // if we've been disposed just drop out of loop
+                        if (cancellationTokenSource.IsCancellationRequested) return;
+
+                        // if the publish fails we should probably leave the publish message on the queue
+                        logger.InfoWrite("Requeueing message");
+                        publishQueue.Add(publishContext);
                     }
                 }
                 catch (OperationCanceledException)
@@ -111,6 +125,7 @@ namespace EasyNetQ.AMQP
 
         public void Dispose()
         {
+            channelErrorWait.Set();
             cancellationTokenSource.Cancel();
         }
     }

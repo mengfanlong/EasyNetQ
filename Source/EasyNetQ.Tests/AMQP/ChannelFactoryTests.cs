@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.AMQP;
+using EasyNetQ.Loggers;
 using NUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
@@ -21,7 +22,7 @@ namespace EasyNetQ.Tests.AMQP
             model = MockRepository.GenerateStub<IModel>();
             connection = MockRepository.GenerateStub<IConnection>();
 
-            channelFactory = new ChannelFactory();
+            channelFactory = new ChannelFactory(new ConsoleLogger());
         }
 
         [Test]

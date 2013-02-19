@@ -37,6 +37,11 @@ namespace EasyNetQ.AMQP
 
         public void Initialise(IPersistentConnection persistentConnection, IChannelSettings channelSettings)
         {
+            if (disposed)
+            {
+                throw new EasyNetQAmqpException("PersistentChannel cannot be initialised because it is already disposed");
+            }
+
             this.persistentConnection = persistentConnection;
             this.channelSettings = channelSettings;
             TryOpenChannel();
@@ -55,6 +60,7 @@ namespace EasyNetQ.AMQP
 
         private void TryOpenChannel()
         {
+            if (disposed) return;
             try
             {
                 currentChannel = persistentConnection.OpenChannel(channelSettings);
@@ -62,6 +68,7 @@ namespace EasyNetQ.AMQP
                 channelClosedHandler = () =>
                 {
                     currentChannel.ChannelClosed -= channelClosedHandler;
+                    if (disposed) return;
                     currentChannel.Dispose();
                     OnChannelClosed();
                     TryOpenChannel();
@@ -75,6 +82,7 @@ namespace EasyNetQ.AMQP
                 connectionOpenHandler = () =>
                 {
                     persistentConnection.Connected -= connectionOpenHandler;
+                    if (disposed) return;
                     TryOpenChannel();
                 };
                 persistentConnection.Connected += connectionOpenHandler;
@@ -83,12 +91,12 @@ namespace EasyNetQ.AMQP
 
         public void Dispose()
         {
-            if(currentChannel != null)
+            disposed = true;
+            if (currentChannel != null)
             {
                 currentChannel.Dispose();
                 OnChannelClosed();
             }
-            disposed = true;
         }
 
         private void CheckInitialisedAndNotDisposed()

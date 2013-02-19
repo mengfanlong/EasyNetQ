@@ -7,8 +7,9 @@ namespace EasyNetQ.AMQP
     public class Channel : IChannel
     {
         private readonly IModel model;
+        private readonly IEasyNetQLogger logger;
 
-        public Channel(IModel model)
+        public Channel(IModel model, IEasyNetQLogger logger)
         {
             if(model == null)
             {
@@ -16,6 +17,7 @@ namespace EasyNetQ.AMQP
             }
 
             this.model = model;
+            this.logger = logger;
             model.ModelShutdown += (model1, reason) =>
             {
                 if (ChannelClosed != null)
@@ -27,6 +29,7 @@ namespace EasyNetQ.AMQP
 
         public void Dispose()
         {
+            model.Close(EasyNetQErrorCodes.ChannelClosedByEasyNetQ, "Dispose was called on EasyNetQ.AMQP.Channel");
             model.Dispose();
         }
 
@@ -285,6 +288,11 @@ namespace EasyNetQ.AMQP
                 basicProperties,
                 message.Body
                 );
+
+            logger.DebugWrite("Published to exchange: '{0}', routing key: '{1}', correlation id: '{2}'",
+                settings.Exchange.Name, 
+                settings.RoutingKey, 
+                message.Properties.CorrelationId.Value);
         }
 
         public IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings)

@@ -6,6 +6,13 @@ namespace EasyNetQ.AMQP
 {
     public class ChannelFactory : IChannelFactory
     {
+        private readonly IEasyNetQLogger logger;
+
+        public ChannelFactory(IEasyNetQLogger logger)
+        {
+            this.logger = logger;
+        }
+
         public IChannel OpenChannel(IConnection connection, IChannelSettings settings)
         {
             if(connection == null)
@@ -25,7 +32,7 @@ namespace EasyNetQ.AMQP
                     model.ConfirmSelect();
                 }
                 model.BasicQos(0, settings.PrefetchCount, false);
-                return new Channel(model);
+                return new Channel(model, logger);
             }
             catch (OperationInterruptedException operationInterruptedException)
             {

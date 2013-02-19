@@ -2,6 +2,7 @@
 
 using System.Threading;
 using EasyNetQ.AMQP;
+using EasyNetQ.Loggers;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -22,7 +23,7 @@ namespace EasyNetQ.Tests.AMQP
             channelSettings = MockRepository.GenerateStub<IChannelSettings>();
             persistentConnection = MockRepository.GenerateStub<IPersistentConnection>();
 
-            publishDispatcher = new PublishDispatcher(persistentChannel);
+            publishDispatcher = new PublishDispatcher(persistentChannel, new ConsoleLogger());
             publishDispatcher.Initialize(persistentConnection, channelSettings);
         }
 

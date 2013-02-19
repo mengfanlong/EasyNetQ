@@ -2,6 +2,7 @@
 
 using System.Text;
 using EasyNetQ.AMQP;
+using EasyNetQ.Loggers;
 using NUnit.Framework;
 using RabbitMQ.Client;
 using Rhino.Mocks;
@@ -18,7 +19,7 @@ namespace EasyNetQ.Tests.AMQP
         public void SetUp()
         {
             model = MockRepository.GenerateStub<IModel>();
-            channel = new Channel(model);
+            channel = new Channel(model, new ConsoleLogger());
 
             model.Stub(x => x.CreateBasicProperties()).Return(new TestBasicProperties());
         }

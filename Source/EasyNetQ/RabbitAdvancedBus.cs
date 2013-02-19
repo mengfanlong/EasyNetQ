@@ -80,7 +80,7 @@ namespace EasyNetQ
                 connectionFactory, 
                 logger, 
                 new ConnectionRetryTimer(connectionConfiguration), 
-                new ChannelFactory());
+                new ChannelFactory(logger));
 
             connection.TryToConnect();
 

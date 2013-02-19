@@ -122,8 +122,9 @@
     <Compile Include="ModelCleanupTests.cs" />
     <Compile Include="MultiThreadedPublisherTests.cs" />
     <Compile Include="AMQP\PublishDispatcherTests.cs" />
-    <Compile Include="Patterns\ConsumerPipelineTests.cs" />
-    <Compile Include="Patterns\MessagePipelineSpike.cs" />
+    <Compile Include="Patterns\ConsumerPipelineBuilderTests.cs" />
+    <Compile Include="Patterns\EasyNetQBusTests.cs" />
+    <Compile Include="Patterns\ProducerPipelineBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirmsTests.cs" />
     <Compile Include="PublishSubscribeTests.cs" />
