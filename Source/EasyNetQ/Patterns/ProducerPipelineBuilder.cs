@@ -5,12 +5,12 @@ namespace EasyNetQ.Patterns
 {
     public interface IProducerPipelineBuilder
     {
-        ProducerTransformer<int> CreatePipeline<T>(T message);
+        ProducerTransformer<int> CreateDefaultPublishPipeline<T>(T message);
     }
 
     public class ProducerPipelineBuilder : IProducerPipelineBuilder
     {
-        public ProducerTransformer<int> CreatePipeline<T>(T message)
+        public ProducerTransformer<int> CreateDefaultPublishPipeline<T>(T message)
         {
             return 
                 from json in PipelineElements.Serialize(message)

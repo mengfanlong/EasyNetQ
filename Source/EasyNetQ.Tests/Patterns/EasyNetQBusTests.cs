@@ -51,7 +51,7 @@ namespace EasyNetQ.Tests.Patterns
             persistentChannel = new PersistentChannel();
             persistentChannel.Initialise(persistentConnection, new ChannelSettings());
 
-            publishDispatcher = new PublishDispatcher(persistentChannel, logger);
+            publishDispatcher = new PublishDispatcher(persistentChannel, logger, new ExchangeManager());
             publishDispatcher.Initialize(persistentConnection, new ChannelSettings());
 
             bus = new EasyNetQBus(
@@ -75,7 +75,7 @@ namespace EasyNetQ.Tests.Patterns
             var message = new MyMessage {Text = "Hello World!"};
             bus.Publish(message);
 
-            Thread.Sleep(10);
+            Thread.Sleep(100);
         }
 
         [Test]

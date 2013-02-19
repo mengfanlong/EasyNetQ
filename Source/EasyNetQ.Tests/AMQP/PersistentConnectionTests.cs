@@ -135,7 +135,8 @@ ERROR: Failed to connected to any Broker. Retrying in 66 seconds
             connectionFactory.AssertWasNotCalled(x => x.CreateConnection());
 
             const string expectedLogMessage =
-@"DEBUG: Trying to connect
+@"DEBUG: PersistenConnection.Dispose() - connection already null
+DEBUG: Trying to connect
 ERROR: Cannot connect a disposed connection
 ";
             recordingLogger.LogMessages.ShouldEqual(expectedLogMessage);

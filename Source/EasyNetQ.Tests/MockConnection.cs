@@ -11,11 +11,13 @@ namespace EasyNetQ.Tests
     {
         public Func<IModel> CreateModelAction { get; set; } 
         public Action DisposeAction { get; set;  }
+        public Action<ushort, string> CloseModelAction { get; set; } 
 
         public MockConnection(IModel model)
         {
             CreateModelAction = () => model;
             DisposeAction = () => { };
+            CloseModelAction = (a, b) => { };
         }
 
         public void Dispose()
@@ -35,7 +37,7 @@ namespace EasyNetQ.Tests
 
         public void Close(ushort reasonCode, string reasonText)
         {
-            throw new System.NotImplementedException();
+            CloseModelAction(reasonCode, reasonText);
         }
 
         public void Close(int timeout)

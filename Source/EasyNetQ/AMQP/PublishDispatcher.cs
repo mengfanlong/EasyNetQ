@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using EasyNetQ.Patterns;
 
 namespace EasyNetQ.AMQP
 {
@@ -12,6 +13,7 @@ namespace EasyNetQ.AMQP
     {
         private readonly IPersistentChannel persistentChannel;
         private readonly IEasyNetQLogger logger;
+        private readonly IExchangeManager exchangeManager;
 
         private readonly AutoResetEvent channelErrorWait = new AutoResetEvent(false);
 
@@ -22,10 +24,14 @@ namespace EasyNetQ.AMQP
         private Thread publishThread;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public PublishDispatcher(IPersistentChannel persistentChannel, IEasyNetQLogger logger)
+        public PublishDispatcher(
+            IPersistentChannel persistentChannel, 
+            IEasyNetQLogger logger, 
+            IExchangeManager exchangeManager)
         {
             this.persistentChannel = persistentChannel;
             this.logger = logger;
+            this.exchangeManager = exchangeManager;
         }
 
         public void Initialize(IPersistentConnection connection, IChannelSettings channelSettings)
@@ -84,6 +90,12 @@ namespace EasyNetQ.AMQP
                     var publishContext = publishQueue.Take(cancellationTokenSource.Token);
                     try
                     {
+                        if (exchangeManager.ShouldDeclare(publishContext.PublishSettings.Exchange))
+                        {
+                            persistentChannel.Declare(publishContext.PublishSettings.Exchange);
+                            exchangeManager.Declared(publishContext.PublishSettings.Exchange);
+                        }
+
                         persistentChannel.Publish(publishContext.RawMessage, publishContext.PublishSettings);
                     }
                     catch (RabbitMQ.Client.Exceptions.OperationInterruptedException operationInterruptedException)

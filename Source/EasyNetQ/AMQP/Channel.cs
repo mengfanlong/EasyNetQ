@@ -48,6 +48,12 @@ namespace EasyNetQ.AMQP
                 exchange.Durable, 
                 exchange.AutoDelete, 
                 exchange.Arguments.ToLegacyDictionary());
+
+            logger.DebugWrite("Declared exchange name: '{0}', type: '{1}', durable: '{2}', autodelete: '{3}'",
+                exchange.Name,
+                exchange.Type,
+                exchange.Durable,
+                exchange.AutoDelete);
         }
 
         public bool Exists(IExchange exchange)

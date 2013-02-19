@@ -133,6 +133,7 @@
     <Compile Include="AMQP\PublishDispatcher.cs" />
     <Compile Include="Patterns\ConsumerPipelineBuilder.cs" />
     <Compile Include="Patterns\EasyNetQBus.cs" />
+    <Compile Include="Patterns\IExchangeManager.cs" />
     <Compile Include="Patterns\PipelineElements.cs" />
     <Compile Include="Patterns\ProducerPipelineBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

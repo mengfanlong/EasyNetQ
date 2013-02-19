@@ -123,7 +123,16 @@ namespace EasyNetQ.AMQP
 
     public class ExchangeSettings
     {
+        /// <summary>
+        /// A durable exchange will survive server restarts.
+        /// </summary>
         public bool Durable { get; set; }
+
+        /// <summary>
+        /// autodelete = delete when the *last* downstream thing (i.e. consumers for 
+        /// a queue, or queues for an exchange) goes away. Note that this isn't 
+        /// bound to channels or connections at all.
+        /// </summary>
         public bool AutoDelete { get; set; }
 
         public ExchangeSettings()

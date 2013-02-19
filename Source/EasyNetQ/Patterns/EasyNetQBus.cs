@@ -41,7 +41,7 @@ namespace EasyNetQ.Patterns
 
         public void Publish<T>(T message)
         {
-            var pipeline = producerPipelineBuilder.CreatePipeline(message);
+            var pipeline = producerPipelineBuilder.CreateDefaultPublishPipeline(message);
             var context = new MessagePublishingContext();
             pipeline(context);
             publishDispatcher.Publish(context.RawMessage, context.PublishSettings);

@@ -3,6 +3,7 @@
 using System.Threading;
 using EasyNetQ.AMQP;
 using EasyNetQ.Loggers;
+using EasyNetQ.Patterns;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -15,6 +16,8 @@ namespace EasyNetQ.Tests.AMQP
         private IPersistentChannel persistentChannel;
         private IChannelSettings channelSettings;
         private IPersistentConnection persistentConnection;
+        private IExchangeManager exchangeManager;
+        private IExchange exchange;
 
         [SetUp]
         public void SetUp()
@@ -22,8 +25,10 @@ namespace EasyNetQ.Tests.AMQP
             persistentChannel = MockRepository.GenerateStub<IPersistentChannel>();
             channelSettings = MockRepository.GenerateStub<IChannelSettings>();
             persistentConnection = MockRepository.GenerateStub<IPersistentConnection>();
+            exchangeManager = MockRepository.GenerateStub<IExchangeManager>();
+            exchange = MockRepository.GenerateStub<IExchange>();
 
-            publishDispatcher = new PublishDispatcher(persistentChannel, new ConsoleLogger());
+            publishDispatcher = new PublishDispatcher(persistentChannel, new ConsoleLogger(), exchangeManager);
             publishDispatcher.Initialize(persistentConnection, channelSettings);
         }
 
@@ -38,6 +43,7 @@ namespace EasyNetQ.Tests.AMQP
         {
             var message = MockRepository.GenerateStub<IRawMessage>();
             var settings = MockRepository.GenerateStub<IPublishSettings>();
+            settings.Stub(x => x.Exchange).Return(exchange);
             var reset = new AutoResetEvent(false);
             var channelPublishWasCalled = false;
 
@@ -67,6 +73,28 @@ namespace EasyNetQ.Tests.AMQP
             publishDispatcher.Dispose();
 
             publishDispatcher.Publish(message, settings);
+        }
+
+        [Test]
+        public void Should_declare_exchange_if_instructed_by_exchange_manager()
+        {
+            exchangeManager.Stub(x => x.ShouldDeclare(exchange)).Return(true);
+
+            Should_be_able_to_publish_a_message();
+
+            persistentChannel.AssertWasCalled(x => x.Declare(exchange));
+            exchangeManager.AssertWasCalled(x => x.Declared(exchange));
+        }
+
+        [Test]
+        public void Should_not_declare_exchange_if_instructed_by_exchange_manager()
+        {
+            exchangeManager.Stub(x => x.ShouldDeclare(exchange)).Return(false);
+
+            Should_be_able_to_publish_a_message();
+
+            persistentChannel.AssertWasNotCalled(x => x.Declare(exchange));
+            exchangeManager.AssertWasNotCalled(x => x.Declared(exchange));
         }
     }
 }

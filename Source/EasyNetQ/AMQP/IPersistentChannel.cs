@@ -9,6 +9,7 @@ namespace EasyNetQ.AMQP
         void Initialise(IPersistentConnection persistentConnection, IChannelSettings channelSettings);
         IConsumerHandle StartConsuming(IConsumer consumer, IConsumerSettings settings);
         void Publish(IRawMessage rawMessage, IPublishSettings publishSettings);
+        void Declare(IExchange exchange);
     }
 
     public class PersistentChannel : IPersistentChannel
@@ -56,6 +57,11 @@ namespace EasyNetQ.AMQP
         public void Publish(IRawMessage rawMessage, IPublishSettings publishSettings)
         {
             currentChannel.Publish(rawMessage, publishSettings);
+        }
+
+        public void Declare(IExchange exchange)
+        {
+            currentChannel.Declare(exchange);
         }
 
         private void TryOpenChannel()

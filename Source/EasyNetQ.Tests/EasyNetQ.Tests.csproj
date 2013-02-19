@@ -124,6 +124,7 @@
     <Compile Include="AMQP\PublishDispatcherTests.cs" />
     <Compile Include="Patterns\ConsumerPipelineBuilderTests.cs" />
     <Compile Include="Patterns\EasyNetQBusTests.cs" />
+    <Compile Include="Patterns\ExchangeManagerTests.cs" />
     <Compile Include="Patterns\ProducerPipelineBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublisherConfirmsTests.cs" />

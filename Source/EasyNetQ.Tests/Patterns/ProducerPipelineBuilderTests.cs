@@ -22,7 +22,7 @@ namespace EasyNetQ.Tests.Patterns
             
             var message = new MyMessage { Text = "Hello World" };
 
-            var pipeline = pipelineBuilder.CreatePipeline(message);
+            var pipeline = pipelineBuilder.CreateDefaultPublishPipeline(message);
 
             var context = new MessagePublishingContext();
             pipeline(context);
@@ -36,6 +36,11 @@ namespace EasyNetQ.Tests.Patterns
             context.RawMessage.Properties.ContentEncoding.Value.ShouldEqual("UTF8");
 
             Guid.Parse(context.RawMessage.Properties.CorrelationId.Value);
+
+            context.PublishSettings.Exchange.Name.ShouldEqual("EasyNetQ_Tests_MyMessage:EasyNetQ_Tests");
+            context.PublishSettings.RoutingKey.ShouldEqual("#");
+            context.PublishSettings.Immediate.ShouldBeFalse();
+            context.PublishSettings.Mandatory.ShouldBeFalse();
         }
     }
 }
