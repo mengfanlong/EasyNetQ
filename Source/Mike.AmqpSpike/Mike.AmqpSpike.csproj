@@ -63,6 +63,7 @@
     <Compile Include="IO.Ntfs\StreamName.cs" />
     <Compile Include="JsonNetSpike.cs" />
     <Compile Include="LambdaSpike.cs" />
+    <Compile Include="ModelEventSpike.cs" />
     <Compile Include="VariousBehaviourSpikes.cs" />
     <Compile Include="PerformanceCounterSpike.cs" />
     <Compile Include="PingPongSpike.cs" />

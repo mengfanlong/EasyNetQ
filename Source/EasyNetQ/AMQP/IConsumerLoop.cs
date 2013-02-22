@@ -27,7 +27,7 @@ namespace EasyNetQ.AMQP
                     var action = messageQueue.Take();
                     action();
                 }
-            });
+            }){ Name = "EasyNetQ consumer loop" };
 
             consumerThread.Start();
         }

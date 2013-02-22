@@ -61,6 +61,7 @@
     <Compile Include="AMQP\EasyNetQAmqpException.cs" />
     <Compile Include="AMQP\EasyNetQBasicConsumer.cs" />
     <Compile Include="AMQP\EasyNetQErrorCodes.cs" />
+    <Compile Include="AMQP\EasyNetQOpenChannelException.cs" />
     <Compile Include="AMQP\Headers.cs" />
     <Compile Include="AMQP\IChannel.cs" />
     <Compile Include="AMQP\IChannelFactory.cs" />

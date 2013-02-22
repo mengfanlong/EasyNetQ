@@ -323,6 +323,12 @@ namespace EasyNetQ.AMQP
                 settings.Arguments.ToLegacyDictionary(),
                 basicConsumer);
 
+            logger.DebugWrite("Started consuming from queue: {0}, NoAck: {1}, Consumer tag: '{2}', Exclusive: {3}",
+                settings.Queue.Name,
+                settings.NoAck,
+                settings.ConsumerTag,
+                settings.Exclusive);
+
             return new ConsumerHandle(consumerTag, model);
         }
 

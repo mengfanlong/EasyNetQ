@@ -57,7 +57,10 @@ namespace EasyNetQ.Patterns
         {
             return context =>
             {
-                context.RawMessage.Properties.CorrelationId.Value = Guid.NewGuid().ToString();
+                if (!context.RawMessage.Properties.CorrelationId.IsSet)
+                {
+                    context.RawMessage.Properties.CorrelationId.Value = Guid.NewGuid().ToString();
+                }
                 return context.RawMessage;
             };
         }

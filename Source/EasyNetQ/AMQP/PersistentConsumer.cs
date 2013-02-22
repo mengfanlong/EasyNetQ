@@ -42,14 +42,18 @@ namespace EasyNetQ.AMQP
                 throw new ArgumentNullException("channelSettings");
             }
 
-            var consumerHandle = new PersistentConsumerHandle();
+            var persistentConsumerHandle = new PersistentConsumerHandle();
 
-            persistentChannel.ChannelOpened += () => 
-                consumerHandle.SetHandle(persistentChannel.StartConsuming(consumer, settings));
-            
+            // we want to start consuming every time the persistentChannle reconnects
+            persistentChannel.ChannelOpened += () =>
+            {
+                var consumerHandle = persistentChannel.StartConsuming(consumer, settings);
+                persistentConsumerHandle.SetHandle(consumerHandle);
+            };
+
             persistentChannel.Initialise(persistentConnection, channelSettings);
-
-            return consumerHandle;
+             
+            return persistentConsumerHandle;
         }
 
         public void Dispose()

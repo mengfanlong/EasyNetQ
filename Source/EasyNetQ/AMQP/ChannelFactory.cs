@@ -36,7 +36,7 @@ namespace EasyNetQ.AMQP
             }
             catch (OperationInterruptedException operationInterruptedException)
             {
-                throw new EasyNetQAmqpException(operationInterruptedException, operationInterruptedException.Message);
+                throw new EasyNetQOpenChannelException(operationInterruptedException.Message, operationInterruptedException);
             }
         }
     }

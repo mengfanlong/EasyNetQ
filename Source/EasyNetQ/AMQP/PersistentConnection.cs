@@ -53,7 +53,7 @@ namespace EasyNetQ.AMQP
         {
             if (!IsConnected)
             {
-                throw new EasyNetQException("Rabbit server is not connected.");
+                throw new EasyNetQOpenChannelException("Rabbit server is not connected.");
             }
             return channelFactory.OpenChannel(connection, settings);
         }

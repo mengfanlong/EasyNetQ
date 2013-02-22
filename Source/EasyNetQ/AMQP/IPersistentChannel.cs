@@ -82,7 +82,7 @@ namespace EasyNetQ.AMQP
                 currentChannel.ChannelClosed += channelClosedHandler;
                 OnChannelOpen();
             }
-            catch (Exception)
+            catch (EasyNetQOpenChannelException)
             {
                 Action connectionOpenHandler = null;
                 connectionOpenHandler = () =>

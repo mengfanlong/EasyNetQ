@@ -47,7 +47,7 @@ namespace EasyNetQ.AMQP
             }
 
             persistentChannel.Initialise(connection, channelSettings);
-            publishThread = new Thread(StartInternalPublishLoop);
+            publishThread = new Thread(StartInternalPublishLoop) {Name = "EasyNetQ publish loop"};
             publishThread.Start();
             isInitialised = true;
         }
@@ -137,8 +137,8 @@ namespace EasyNetQ.AMQP
 
         public void Dispose()
         {
-            channelErrorWait.Set();
             cancellationTokenSource.Cancel();
+            channelErrorWait.Set();
         }
     }
 }

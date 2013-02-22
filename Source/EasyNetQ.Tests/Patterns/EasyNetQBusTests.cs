@@ -47,6 +47,7 @@ namespace EasyNetQ.Tests.Patterns
             persistentConnection.TryToConnect();
 
             IProducerPipelineBuilder producerPipelineBuilder = new ProducerPipelineBuilder();
+            IConsumerPipelineBuilder consumerPipelineBuilder = new ConsumerPipelineBuilder();
             
             persistentChannel = new PersistentChannel();
             persistentChannel.Initialise(persistentConnection, new ChannelSettings());
@@ -58,7 +59,8 @@ namespace EasyNetQ.Tests.Patterns
                 producerPipelineBuilder, 
                 persistentConnection, 
                 persistentChannel, 
-                publishDispatcher);
+                publishDispatcher,
+                consumerPipelineBuilder);
         }
 
         [TearDown]
@@ -70,6 +72,12 @@ namespace EasyNetQ.Tests.Patterns
         }
 
         [Test]
+        public void Should_shutdown_cleanly()
+        {
+            // do nothing, just test that everything gets disposed correctly
+        }
+
+        [Test]
         public void Should_publish_a_message()
         {
             var message = new MyMessage {Text = "Hello World!"};
@@ -78,8 +86,11 @@ namespace EasyNetQ.Tests.Patterns
             Thread.Sleep(100);
         }
 
+        /// <summary>
+        /// Publish lots of messages from ten different threads
+        /// </summary>
         [Test]
-        public void Should_publish_a_load_of_messages_from_different_threads()
+        public void Publish_should_be_thread_safe()
         {
             const int numberOfThreads = 10;
 
